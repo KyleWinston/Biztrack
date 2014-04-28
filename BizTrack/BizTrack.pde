@@ -1,4 +1,4 @@
-
+PImage poweredby;
 PFont f;
 String baseUrl = "http://api.sandbox.yellowapi.com";
 String apiCode = "b4trsn8g2h898uxz3yef6fc8";
@@ -10,7 +10,7 @@ String name = "";
 String thinking = "";
 String done = "";
 String phone="";
-int pagetostart=0;
+int pagetostart=1;
 String URL="";
 ArrayList<String> listData= new ArrayList<String>();
 void setup(){
@@ -27,14 +27,15 @@ void draw(){
   rect(20,60,500,20);
   textFont(f);
   fill(0); 
-  text("powered by yellow pages API",300,180);
+  poweredby = loadImage("PoweredByYellowAPI-png-LB.png");
+  image(poweredby,350,150,128,36);
   text(what+(frameCount/10 % 2 == 0 ? "_" : ""),20,33);
   text(where+(frameCount/10 % 2 == 0 ? "_" : ""),20,73);
     text(done,150,150);
      if(entered==2){
       entered=0;
       thinking="thinking";
-      getDetails(what,where, 1);
+      getDetails(what,where, pagetostart);
      
      }
 
@@ -91,7 +92,6 @@ void getDetails(String what, String where, int page){
     processing.data.JSONObject Sumdata = processing.data.JSONObject.parse(join(loadStrings(Sum),""));
     processing.data.JSONObject SumSum = Sumdata.getJSONObject("summary");
     int leng = SumSum.getInt("pageCount");
-     pagetostart = SumSum.getInt("currentPage");
     for(int i=page; i<=leng; i++){
           delay(1000);
   String request = baseUrl + "/FindBusiness/?" + "&what=" + what + "&where=" + where + "&fmt=JSON&pgLen=50" + "&pg=" + i + "&apikey=" + apiCode +"&UID=127.0.0.1";
@@ -121,7 +121,9 @@ processing.data.JSONObject YPdetails  = processing.data.JSONObject.parse(join(lo
 processing.data.JSONArray YPdetailsarray = YPdetails.getJSONArray("phones");
 processing.data.JSONObject YPdetailsproducts = YPdetails.getJSONObject("products");
 processing.data.JSONArray YPdetailsURLs = YPdetailsproducts.getJSONArray("webUrl");
+if(YPdetailsURLs.size()!=0){
  URL = YPdetailsURLs.getString(0);
+}
 processing.data.JSONObject YPdetailsobject = YPdetailsarray.getJSONObject(0);
  phone = YPdetailsobject.getString("dispNum");
 
@@ -140,6 +142,7 @@ listData.add(URL);
 listData.add(" ");
 
   }
+  pagetostart++;
     }
 String [] DataData = listData.toArray(new String[listData.size()]);
 savedata(DataData);
@@ -150,12 +153,12 @@ loopBackIn(pagetostart);
 }
 }
 void savedata(String[] Data){
-  saveStrings("/BizTrack.txt",Data);
+  saveStrings("Macintosh HD/Users/kyle/Documents/BizTrack.txt",Data);
 }
 
 void loopBackIn(int pageToStart){
-  
-  getDetails(what,where,pageToStart+1);
+ int newpage=pageToStart+1;
+  getDetails(what,where,newpage);
 }
   
 
