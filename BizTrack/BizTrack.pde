@@ -11,6 +11,7 @@ String thinking = "";
 String done = "";
 String phone="";
 int pagetostart=0;
+String URL="";
 ArrayList<String> listData= new ArrayList<String>();
 void setup(){
   size(550,200);
@@ -118,6 +119,9 @@ String details = "http://api.sandbox.yellowapi.com/GetBusinessDetails/?listingId
 
 processing.data.JSONObject YPdetails  = processing.data.JSONObject.parse(join(loadStrings(details),""));
 processing.data.JSONArray YPdetailsarray = YPdetails.getJSONArray("phones");
+processing.data.JSONObject YPdetailsproducts = YPdetails.getJSONObject("products");
+processing.data.JSONArray YPdetailsURLs = YPdetailsproducts.getJSONArray("webUrl");
+ URL = YPdetailsURLs.getString(0);
 processing.data.JSONObject YPdetailsobject = YPdetailsarray.getJSONObject(0);
  phone = YPdetailsobject.getString("dispNum");
 
@@ -125,12 +129,14 @@ println(name);
 println(street);
 println(city + ", " + province + ", " + postalCode);
 println(phone);
+println(URL);
 println(" ");
 
 listData.add(name);
 listData.add(street);
 listData.add(city + ", " + province + ", " + postalCode);
 listData.add(phone);
+listData.add(URL);
 listData.add(" ");
 
   }
@@ -144,7 +150,7 @@ loopBackIn(pagetostart);
 }
 }
 void savedata(String[] Data){
-  saveStrings("BizTrack.txt",Data);
+  saveStrings("/BizTrack.txt",Data);
 }
 
 void loopBackIn(int pageToStart){
